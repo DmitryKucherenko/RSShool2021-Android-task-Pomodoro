@@ -1,4 +1,4 @@
-package com.rsschool.pomodoro
+package com.rsschool.pomodoro.model
 
 data class Stopwatch(
     val id: Int,

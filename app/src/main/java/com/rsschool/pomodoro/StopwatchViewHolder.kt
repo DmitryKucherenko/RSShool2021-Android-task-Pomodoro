@@ -1,12 +1,12 @@
 package com.rsschool.pomodoro
 
 import android.content.res.Resources
-import android.graphics.Color
 import android.graphics.drawable.AnimationDrawable
 import android.os.CountDownTimer
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
 import com.rsschool.pomodoro.databinding.StopwatchItemBinding
+import com.rsschool.pomodoro.model.Stopwatch
 
 
 class StopwatchViewHolder(
@@ -31,7 +31,6 @@ class StopwatchViewHolder(
     private fun initButtonsListeners(stopwatch: Stopwatch) {
 
         binding.startStopButton.setOnClickListener {
-
             if (stopwatch.isStarted) {
                 listener.stop(stopwatch.id, stopwatch.currentMs)
             } else
@@ -71,8 +70,6 @@ class StopwatchViewHolder(
             }
 
             override fun onFinish() {
-              //  stopwatch.currentMs=0L
-
                 stopTimer(stopwatch)
                 binding.stopwatchTimer.text = stopwatch.startTime.displayTime()
                 stopwatch.currentMs=stopwatch.startTime
@@ -106,6 +103,5 @@ class StopwatchViewHolder(
 
         private const val START_TIME = "00:00:00:00"
         private const val UNIT_TEN_MS = 10L
-        private const val PERIOD = 1000L * 60L * 60L * 24L // Day
     }
 }

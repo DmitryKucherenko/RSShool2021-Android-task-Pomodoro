@@ -3,7 +3,9 @@ package com.rsschool.pomodoro
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.rsschool.pomodoro.adapter.StopwatchAdapter
 import com.rsschool.pomodoro.databinding.ActivityMainBinding
+import com.rsschool.pomodoro.model.Stopwatch
 
 
 class MainActivity : AppCompatActivity(), StopwatchListener {
@@ -63,6 +65,8 @@ class MainActivity : AppCompatActivity(), StopwatchListener {
         stopwatches.clear()
         stopwatches.addAll(newTimers)
     }
+
+
 
 
 }

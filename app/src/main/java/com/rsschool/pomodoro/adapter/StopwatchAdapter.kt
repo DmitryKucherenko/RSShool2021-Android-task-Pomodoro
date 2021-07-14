@@ -1,10 +1,13 @@
-package com.rsschool.pomodoro
+package com.rsschool.pomodoro.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import com.rsschool.pomodoro.StopwatchListener
+import com.rsschool.pomodoro.StopwatchViewHolder
 import com.rsschool.pomodoro.databinding.StopwatchItemBinding
+import com.rsschool.pomodoro.model.Stopwatch
 
 
 class StopwatchAdapter(
@@ -18,7 +21,6 @@ class StopwatchAdapter(
     }
 
     override fun onBindViewHolder(holder: StopwatchViewHolder, position: Int) {
-        //holder.bind(getItem(position))
         holder.bind(currentList[position])
     }
 
@@ -37,7 +39,9 @@ class StopwatchAdapter(
 
             }
 
-            override fun getChangePayload(oldItem: Stopwatch, newItem: Stopwatch) = Any()
+            override fun getChangePayload(oldItem: Stopwatch, newItem: Stopwatch):Any?{
+                return super.getChangePayload(oldItem, newItem)
+            }
         }
     }
 }
