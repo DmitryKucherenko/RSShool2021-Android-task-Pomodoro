@@ -7,6 +7,9 @@ import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
 import com.rsschool.pomodoro.databinding.StopwatchItemBinding
 import com.rsschool.pomodoro.model.Stopwatch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class StopwatchViewHolder(
@@ -14,11 +17,14 @@ class StopwatchViewHolder(
     private val listener: StopwatchListener,
     private val resources: Resources
 ) : RecyclerView.ViewHolder(binding.root) {
-
     private var timer: CountDownTimer? = null
 
     fun bind(stopwatch: Stopwatch) {
+
+
         binding.stopwatchTimer.text = stopwatch.currentMs.displayTime()
+        if(stopwatch.isFinish) binding.root.setCardBackgroundColor(resources.getColor(R.color.pomodoroColorVariant))else
+            binding.root.setCardBackgroundColor(resources.getColor(R.color.white))
         if (stopwatch.isStarted) {
             startTimer(stopwatch)
         } else {
@@ -38,7 +44,9 @@ class StopwatchViewHolder(
             }
 
 
-        binding.deleteButton.setOnClickListener { listener.delete(stopwatch.id) }
+        binding.deleteButton.setOnClickListener {
+            binding.root.setCardBackgroundColor(resources.getColor(R.color.white))
+            listener.delete(stopwatch.id) }
     }
 
     private fun startTimer(stopwatch: Stopwatch) {
@@ -50,14 +58,22 @@ class StopwatchViewHolder(
 
         binding.blinkingIndicator.isInvisible = false
         (binding.blinkingIndicator.background as? AnimationDrawable)?.start()
+        binding.progressView.setPeriod(stopwatch.startTime)
+        stopwatch.isFinish=false
     }
 
     private fun stopTimer(stopwatch: Stopwatch) {
         binding.startStopButton.text="START"
         timer?.cancel()
-
+        //binding.progressView.setPeriod(stopwatch.currentMs)
         binding.blinkingIndicator.isInvisible = true
         (binding.blinkingIndicator.background as? AnimationDrawable)?.stop()
+
+
+
+
+
+
     }
 
     private fun getCountDownTimer(stopwatch: Stopwatch): CountDownTimer {
@@ -67,13 +83,20 @@ class StopwatchViewHolder(
             override fun onTick(millisUntilFinished: Long) {
                 binding.stopwatchTimer.text = millisUntilFinished.displayTime()
                 stopwatch.currentMs=millisUntilFinished
+                binding.progressView.setCurrent(millisUntilFinished)
+
+
             }
 
             override fun onFinish() {
                 stopTimer(stopwatch)
+                binding.progressView.setCurrent(0)
                 binding.stopwatchTimer.text = stopwatch.startTime.displayTime()
                 stopwatch.currentMs=stopwatch.startTime
+                stopwatch.isFinish=true
+                listener.stop(stopwatch.id, stopwatch.currentMs)
                 binding.root.setCardBackgroundColor(resources.getColor(R.color.pomodoroColorVariant))
+
             }
         }
     }
@@ -101,7 +124,7 @@ class StopwatchViewHolder(
 
     private companion object {
 
-        private const val START_TIME = "00:00:00:00"
+        private const val START_TIME = "00:00:00"
         private const val UNIT_TEN_MS = 10L
     }
 }

@@ -29,14 +29,12 @@ class MainActivity : AppCompatActivity(), StopwatchListener {
 
         binding.addNewStopwatchButton.setOnClickListener {
             val startTime=binding.editTime.text.toString().toLongOrNull() ?: 0L
-            val currentMs=startTime
-            stopwatches.add(Stopwatch(nextId++, startTime, currentMs, false))
+            stopwatches.add(Stopwatch(nextId++, startTime, currentMs = startTime, isStarted = false))
             stopwatchAdapter.submitList(stopwatches.toList())
         }
     }
 
     override fun start(id: Int) {
-        println("start $id")
         changeStopwatch(id,null, true)
     }
 
@@ -54,9 +52,9 @@ class MainActivity : AppCompatActivity(), StopwatchListener {
         val newTimers = mutableListOf<Stopwatch>()
         stopwatches.forEach {
             if (it.id == id) {
-                newTimers.add(Stopwatch(it.id, it.startTime,currentMs ?: it.currentMs, isStarted))
+                newTimers.add(Stopwatch(it.id, it.startTime,currentMs ?: it.currentMs, isStarted,it.isFinish))
             } else if (it.isStarted){
-                newTimers.add(Stopwatch(it.id,  it.startTime,currentMs ?: it.currentMs, false))
+                newTimers.add(Stopwatch(it.id,  it.startTime,currentMs ?: it.currentMs, false,it.isFinish))
             }else{
                 newTimers.add(it)
             }

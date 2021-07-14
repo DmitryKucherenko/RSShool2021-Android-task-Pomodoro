@@ -36,6 +36,17 @@
             app:layout_constraintStart_toEndOf="@id/blinking_indicator"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <com.rsschool.pomodoro.ProgressBar
+            android:id="@+id/progress_view"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginBottom="4dp"
+            app:custom_color="@color/pomodoroColor"
+            app:custom_style="fill"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/start_stop_button"
+            app:layout_constraintStart_toEndOf="@+id/stopwatch_timer" />
+
         <Button
             android:id="@+id/start_stop_button"
             android:layout_width="90dp"
