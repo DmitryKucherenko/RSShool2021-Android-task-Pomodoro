@@ -28,8 +28,13 @@ class StopwatchViewHolder(
         else if(!isRecyclable)
             setIsRecyclable(true)
 
-        if(stopwatch.currentMs!=stopwatch.startTime)  binding.progressView.setCurrent(stopwatch.currentMs)else
+        if(stopwatch.currentMs!=stopwatch.startTime)
+        {
+            binding.progressView.setPeriod(stopwatch.startTime)
+            binding.progressView.setCurrent(stopwatch.currentMs)
+        }else
             binding.progressView.setCurrent(0)
+
         if(stopwatch.isFinish) binding.root.setCardBackgroundColor(resources.getColor(R.color.pomodoroColorVariant))else
             binding.root.setCardBackgroundColor(resources.getColor(R.color.white))
         if (stopwatch.isStarted) {
