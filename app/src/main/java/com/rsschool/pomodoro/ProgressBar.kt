@@ -71,7 +71,6 @@ class ProgressBar @JvmOverloads constructor(
     }
 
     private companion object {
-
         private const val FILL = 0
     }
 }

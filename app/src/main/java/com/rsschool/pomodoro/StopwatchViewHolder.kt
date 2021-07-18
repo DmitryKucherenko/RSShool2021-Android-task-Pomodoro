@@ -23,6 +23,13 @@ class StopwatchViewHolder(
 
 
         binding.stopwatchTimer.text = stopwatch.currentMs.displayTime()
+        if(stopwatch.isStarted)
+            setIsRecyclable(false)
+        else if(!isRecyclable)
+            setIsRecyclable(true)
+
+        if(stopwatch.currentMs!=stopwatch.startTime)  binding.progressView.setCurrent(stopwatch.currentMs)else
+            binding.progressView.setCurrent(0)
         if(stopwatch.isFinish) binding.root.setCardBackgroundColor(resources.getColor(R.color.pomodoroColorVariant))else
             binding.root.setCardBackgroundColor(resources.getColor(R.color.white))
         if (stopwatch.isStarted) {
@@ -45,6 +52,8 @@ class StopwatchViewHolder(
 
 
         binding.deleteButton.setOnClickListener {
+            if(!isRecyclable)
+                setIsRecyclable(true)
             binding.root.setCardBackgroundColor(resources.getColor(R.color.white))
             listener.delete(stopwatch.id) }
     }
@@ -65,41 +74,32 @@ class StopwatchViewHolder(
     private fun stopTimer(stopwatch: Stopwatch) {
         binding.startStopButton.text="START"
         timer?.cancel()
-        //binding.progressView.setPeriod(stopwatch.currentMs)
         binding.blinkingIndicator.isInvisible = true
         (binding.blinkingIndicator.background as? AnimationDrawable)?.stop()
 
-
-
-
-
-
     }
 
-    private fun getCountDownTimer(stopwatch: Stopwatch): CountDownTimer {
-        return object : CountDownTimer(stopwatch.currentMs, UNIT_TEN_MS) {
+        private fun getCountDownTimer(stopwatch: Stopwatch): CountDownTimer {
+            return object : CountDownTimer(stopwatch.currentMs, UNIT_TEN_MS) {
+                override fun onTick(millisUntilFinished: Long) {
+                    binding.stopwatchTimer.text = millisUntilFinished.displayTime()
+                    stopwatch.currentMs=millisUntilFinished
+                    binding.progressView.setCurrent(millisUntilFinished)
+                }
 
-
-            override fun onTick(millisUntilFinished: Long) {
-                binding.stopwatchTimer.text = millisUntilFinished.displayTime()
-                stopwatch.currentMs=millisUntilFinished
-                binding.progressView.setCurrent(millisUntilFinished)
-
-
-            }
-
-            override fun onFinish() {
-                stopTimer(stopwatch)
-                binding.progressView.setCurrent(0)
-                binding.stopwatchTimer.text = stopwatch.startTime.displayTime()
-                stopwatch.currentMs=stopwatch.startTime
-                stopwatch.isFinish=true
-                listener.stop(stopwatch.id, stopwatch.currentMs)
-                binding.root.setCardBackgroundColor(resources.getColor(R.color.pomodoroColorVariant))
-
+                override fun onFinish() {
+                    if(!isRecyclable)
+                        setIsRecyclable(true)
+                    stopTimer(stopwatch)
+                    binding.progressView.setCurrent(0)
+                    binding.stopwatchTimer.text = stopwatch.startTime.displayTime()
+                    stopwatch.currentMs=stopwatch.startTime
+                    stopwatch.isFinish=true
+                    listener.stop(stopwatch.id, stopwatch.currentMs)
+                    binding.root.setCardBackgroundColor(resources.getColor(R.color.pomodoroColorVariant))
+                }
             }
         }
-    }
 
     private fun Long.displayTime(): String {
         if (this <= 0L) {
@@ -108,9 +108,6 @@ class StopwatchViewHolder(
         val h = this / 1000 / 3600
         val m = this / 1000 % 3600 / 60
         val s = this / 1000 % 60
-        //val ms = this % 1000 / 10
-
-      //  return "${displaySlot(h)}:${displaySlot(m)}:${displaySlot(s)}:${displaySlot(ms)}"
         return "${displaySlot(h)}:${displaySlot(m)}:${displaySlot(s)}"
     }
 
@@ -123,8 +120,7 @@ class StopwatchViewHolder(
     }
 
     private companion object {
-
         private const val START_TIME = "00:00:00"
-        private const val UNIT_TEN_MS = 10L
+        const val UNIT_TEN_MS = 10L
     }
 }

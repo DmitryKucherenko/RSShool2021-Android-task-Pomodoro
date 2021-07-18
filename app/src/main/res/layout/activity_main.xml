@@ -34,7 +34,9 @@
         android:layout_marginStart="32dp"
         android:layout_marginBottom="16dp"
         android:ems="10"
-        android:inputType="textPersonName"
+        android:hint="Minutes"
+        android:inputType="number"
+        android:maxLength="5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

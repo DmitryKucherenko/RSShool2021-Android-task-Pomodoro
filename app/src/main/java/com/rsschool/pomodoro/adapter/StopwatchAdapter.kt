@@ -25,23 +25,18 @@ class StopwatchAdapter(
     }
 
     private companion object {
-
         private val itemComparator = object : DiffUtil.ItemCallback<Stopwatch>() {
-
-
-
             override fun areItemsTheSame(oldItem: Stopwatch, newItem: Stopwatch): Boolean {
                 return oldItem.id == newItem.id
             }
 
             override fun areContentsTheSame(oldItem: Stopwatch, newItem: Stopwatch): Boolean {
                 return oldItem.isStarted == newItem.isStarted && oldItem.currentMs == newItem.currentMs
-
             }
 
-            override fun getChangePayload(oldItem: Stopwatch, newItem: Stopwatch)=Any()
+            override fun getChangePayload(oldItem: Stopwatch, newItem: Stopwatch) = Any()
             //?{
-             //   return super.getChangePayload(oldItem, newItem)
+            //   return super.getChangePayload(oldItem, newItem)
             //}
         }
     }
