@@ -14,9 +14,7 @@ import com.rsschool.pomodoro.model.Stopwatch
 
 
 class MainActivity : AppCompatActivity(), StopwatchListener, LifecycleObserver {
-
     private lateinit var binding: ActivityMainBinding
-
     private val stopwatchAdapter = StopwatchAdapter(this)
     private val stopwatches = mutableListOf<Stopwatch>()
     private var nextId = 0
@@ -55,40 +53,20 @@ class MainActivity : AppCompatActivity(), StopwatchListener, LifecycleObserver {
         stopwatchAdapter.submitList(stopwatches.toList())
     }
 
-//    private fun changeStopwatch(id: Int, currentMs: Long?, isStarted: Boolean) {
-//        val newTimers = mutableListOf<Stopwatch>()
-//        stopwatches.forEach {
-//            when {
-//                it.id == id -> {
-//                    newTimers.add(Stopwatch(it.id, it.startTime,currentMs ?: it.currentMs, isStarted,it.isFinish))
-//                }
-//                it.isStarted -> {
-//                    newTimers.add(Stopwatch(it.id,  it.startTime,currentMs ?: it.currentMs, false,it.isFinish))
-//                }
-//                else -> {
-//                    newTimers.add(it)
-//                }
-//            }
-//        }
-//        stopwatchAdapter.submitList(newTimers)
-//        stopwatches.clear()
-//        stopwatches.addAll(newTimers)
-//    }
+
 
     private fun changeStopwatch(id: Int, currentMs: Long?, isStarted: Boolean) {
-        stopwatches.withIndex().forEach {
+        stopwatches.replaceAll{
             when {
-                it.value.id == id -> {
-                    stopwatches.set(it.index,Stopwatch(it.value.id, it.value.startTime,currentMs ?: it.value.currentMs, isStarted,it.value.isFinish))
-                }
-                it.value.isStarted -> {
-                    stopwatches.set(it.index,Stopwatch(it.value.id,  it.value.startTime,currentMs ?: it.value.currentMs, false,it.value.isFinish))
-                }
-                else -> {}
+                it.id == id -> Stopwatch(it.id, it.startTime,currentMs ?: it.currentMs, isStarted,it.isFinish)
+                it.isStarted -> Stopwatch(it.id,  it.startTime,currentMs ?: it.currentMs, false,it.isFinish)
+                else -> {it}
             }
         }
         stopwatchAdapter.submitList(stopwatches.toList())
     }
+
+
 
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
