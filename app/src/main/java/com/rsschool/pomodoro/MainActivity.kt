@@ -55,35 +55,52 @@ class MainActivity : AppCompatActivity(), StopwatchListener, LifecycleObserver {
         stopwatchAdapter.submitList(stopwatches.toList())
     }
 
+//    private fun changeStopwatch(id: Int, currentMs: Long?, isStarted: Boolean) {
+//        val newTimers = mutableListOf<Stopwatch>()
+//        stopwatches.forEach {
+//            when {
+//                it.id == id -> {
+//                    newTimers.add(Stopwatch(it.id, it.startTime,currentMs ?: it.currentMs, isStarted,it.isFinish))
+//                }
+//                it.isStarted -> {
+//                    newTimers.add(Stopwatch(it.id,  it.startTime,currentMs ?: it.currentMs, false,it.isFinish))
+//                }
+//                else -> {
+//                    newTimers.add(it)
+//                }
+//            }
+//        }
+//        stopwatchAdapter.submitList(newTimers)
+//        stopwatches.clear()
+//        stopwatches.addAll(newTimers)
+//    }
+
     private fun changeStopwatch(id: Int, currentMs: Long?, isStarted: Boolean) {
-        val newTimers = mutableListOf<Stopwatch>()
-        stopwatches.forEach {
+        stopwatches.withIndex().forEach {
             when {
-                it.id == id -> {
-                    newTimers.add(Stopwatch(it.id, it.startTime,currentMs ?: it.currentMs, isStarted,it.isFinish))
+                it.value.id == id -> {
+                    stopwatches.set(it.index,Stopwatch(it.value.id, it.value.startTime,currentMs ?: it.value.currentMs, isStarted,it.value.isFinish))
                 }
-                it.isStarted -> {
-                    newTimers.add(Stopwatch(it.id,  it.startTime,currentMs ?: it.currentMs, false,it.isFinish))
+                it.value.isStarted -> {
+                    stopwatches.set(it.index,Stopwatch(it.value.id,  it.value.startTime,currentMs ?: it.value.currentMs, false,it.value.isFinish))
                 }
-                else -> {
-                    newTimers.add(it)
-                }
+                else -> {}
             }
         }
-        stopwatchAdapter.submitList(newTimers)
-        stopwatches.clear()
-        stopwatches.addAll(newTimers)
+        stopwatchAdapter.submitList(stopwatches.toList())
     }
 
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onAppBackgrounded() {
-        var startTime=0L
-        val startIntent = Intent(this, ForegroundService::class.java)
-        startIntent.putExtra(COMMAND_ID, COMMAND_START)
-        if(currentId!=-1)startTime =stopwatchAdapter.currentList.find {it.id == currentId}?.currentMs ?: 0L
-        startIntent.putExtra(STARTED_TIMER_TIME_MS, startTime)
-        startService(startIntent)
+            var startTime = stopwatchAdapter.currentList.find { it.id == currentId }?.currentMs ?: 0L
+        if(startTime>0) {
+            val startIntent = Intent(this, ForegroundService::class.java)
+            startIntent.putExtra(COMMAND_ID, COMMAND_START)
+            startIntent.putExtra(STARTED_TIMER_TIME_MS, startTime)
+            startService(startIntent)
+        }
+
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)

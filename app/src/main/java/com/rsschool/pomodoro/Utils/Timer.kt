@@ -4,15 +4,13 @@ import android.os.CountDownTimer
 import com.rsschool.pomodoro.model.Stopwatch
 
 
-private const val UNIT_TEN_MS = 10L
 
-fun timer(stopwatch: Stopwatch, tick: (Long) -> Unit, finish: () -> Unit): CountDownTimer {
-    return object : CountDownTimer(stopwatch.currentMs, UNIT_TEN_MS) {
 
+fun getTimer(startTime: Long, interval:Long, tick: (Long) -> Unit, finish: () -> Unit): CountDownTimer {
+    return object : CountDownTimer(startTime, interval) {
         override fun onTick(millisUntilFinished: Long) {
             tick(millisUntilFinished)
         }
-
         override fun onFinish() {
             finish()
         }

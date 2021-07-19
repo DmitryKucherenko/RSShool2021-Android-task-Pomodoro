@@ -7,9 +7,7 @@ import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
 import com.rsschool.pomodoro.databinding.StopwatchItemBinding
 import com.rsschool.pomodoro.model.Stopwatch
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+
 
 
 class StopwatchViewHolder(
@@ -84,15 +82,16 @@ class StopwatchViewHolder(
 
     }
 
-        private fun getCountDownTimer(stopwatch: Stopwatch): CountDownTimer {
-            return object : CountDownTimer(stopwatch.currentMs, UNIT_TEN_MS) {
-                override fun onTick(millisUntilFinished: Long) {
-                    binding.stopwatchTimer.text = millisUntilFinished.displayTime()
-                    stopwatch.currentMs=millisUntilFinished
-                    binding.progressView.setCurrent(millisUntilFinished)
-                }
-
-                override fun onFinish() {
+        private fun getCountDownTimer(stopwatch: Stopwatch) =
+             getTimer(
+                startTime = stopwatch.currentMs,
+                interval = TEN_MS,
+                tick =   {
+                    binding.stopwatchTimer.text = it.displayTime()
+                    stopwatch.currentMs=it
+                    binding.progressView.setCurrent(it)
+                },
+                finish = {
                     if(!isRecyclable)
                         setIsRecyclable(true)
                     stopTimer(stopwatch)
@@ -102,30 +101,5 @@ class StopwatchViewHolder(
                     stopwatch.isFinish=true
                     listener.stop(stopwatch.id, stopwatch.currentMs)
                     binding.root.setCardBackgroundColor(resources.getColor(R.color.pomodoroColorVariant))
-                }
-            }
-        }
-
-    private fun Long.displayTime(): String {
-        if (this <= 0L) {
-            return START_TIME
-        }
-        val h = this / 1000 / 3600
-        val m = this / 1000 % 3600 / 60
-        val s = this / 1000 % 60
-        return "${displaySlot(h)}:${displaySlot(m)}:${displaySlot(s)}"
-    }
-
-    private fun displaySlot(count: Long): String {
-        return if (count / 10L > 0) {
-            "$count"
-        } else {
-            "0$count"
-        }
-    }
-
-    private companion object {
-        private const val START_TIME = "00:00:00"
-        const val UNIT_TEN_MS = 10L
-    }
+                })
 }
