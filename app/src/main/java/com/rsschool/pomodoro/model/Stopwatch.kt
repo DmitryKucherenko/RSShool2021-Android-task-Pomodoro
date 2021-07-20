@@ -7,5 +7,6 @@ data class Stopwatch(
     val startTime:Long,
     var currentMs: Long,
     var isStarted: Boolean =false,
-    var isFinish: Boolean =false
+    var isFinish: Boolean =false,
+    var timer: CountDownTimer?
 )

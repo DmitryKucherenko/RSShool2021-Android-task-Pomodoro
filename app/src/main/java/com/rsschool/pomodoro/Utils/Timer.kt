@@ -14,6 +14,7 @@ fun getTimer(startTime: Long, interval:Long, tick: (Long) -> Unit, finish: () ->
         override fun onFinish() {
             finish()
         }
+
     }
 }
 

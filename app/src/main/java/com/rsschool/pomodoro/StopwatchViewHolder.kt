@@ -1,5 +1,6 @@
 package com.rsschool.pomodoro
 
+
 import android.content.res.Resources
 import android.graphics.drawable.AnimationDrawable
 import android.os.CountDownTimer
@@ -18,13 +19,13 @@ class StopwatchViewHolder(
     private var timer: CountDownTimer? = null
 
     fun bind(stopwatch: Stopwatch) {
-
-
         binding.stopwatchTimer.text = stopwatch.currentMs.displayTime()
-        if(stopwatch.isStarted)
+        if(stopwatch.isStarted) {
             setIsRecyclable(false)
-        else if(!isRecyclable)
+        }
+        else if(!isRecyclable){
             setIsRecyclable(true)
+        }
 
         if(stopwatch.currentMs!=stopwatch.startTime)
         {
@@ -48,15 +49,16 @@ class StopwatchViewHolder(
 
         binding.startStopButton.setOnClickListener {
             if (stopwatch.isStarted) {
-                listener.stop(stopwatch.id, stopwatch.currentMs)
-            } else
+                listener.stop(stopwatch.id, stopwatch.currentMs,null)
+            } else {
+//                setIsRecyclable(false)
                 listener.start(stopwatch.id)
+             }
             }
 
 
         binding.deleteButton.setOnClickListener {
-            if(!isRecyclable)
-                setIsRecyclable(true)
+            if(!isRecyclable) setIsRecyclable(true)
             binding.root.setCardBackgroundColor(resources.getColor(R.color.white))
             listener.delete(stopwatch.id) }
     }
@@ -65,16 +67,18 @@ class StopwatchViewHolder(
         binding.startStopButton.text="STOP"
         binding.root.setCardBackgroundColor(resources.getColor(R.color.white))
         timer?.cancel()
-        timer = getCountDownTimer(stopwatch)
+        timer=getCountDownTimer(stopwatch)
+        stopwatch.timer=timer
         timer?.start()
-
         binding.blinkingIndicator.isInvisible = false
         (binding.blinkingIndicator.background as? AnimationDrawable)?.start()
         binding.progressView.setPeriod(stopwatch.startTime)
         stopwatch.isFinish=false
     }
 
-    private fun stopTimer(stopwatch: Stopwatch) {
+
+
+     private fun stopTimer(stopwatch: Stopwatch) {
         binding.startStopButton.text="START"
         timer?.cancel()
         binding.blinkingIndicator.isInvisible = true
@@ -92,14 +96,15 @@ class StopwatchViewHolder(
                     binding.progressView.setCurrent(it)
                 },
                 finish = {
-                    if(!isRecyclable)
-                        setIsRecyclable(true)
                     stopTimer(stopwatch)
                     binding.progressView.setCurrent(0)
                     binding.stopwatchTimer.text = stopwatch.startTime.displayTime()
                     stopwatch.currentMs=stopwatch.startTime
                     stopwatch.isFinish=true
-                    listener.stop(stopwatch.id, stopwatch.currentMs)
                     binding.root.setCardBackgroundColor(resources.getColor(R.color.pomodoroColorVariant))
+
+                    listener.stop(stopwatch.id, stopwatch.currentMs,true)
+//                    if(!isRecyclable)
+//                        setIsRecyclable(true)
                 })
 }
