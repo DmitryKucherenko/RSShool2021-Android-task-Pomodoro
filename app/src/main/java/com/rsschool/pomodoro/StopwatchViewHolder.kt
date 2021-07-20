@@ -41,7 +41,6 @@ class StopwatchViewHolder(
         } else {
             stopTimer(stopwatch)
         }
-
         initButtonsListeners(stopwatch)
     }
 
@@ -51,7 +50,6 @@ class StopwatchViewHolder(
             if (stopwatch.isStarted) {
                 listener.stop(stopwatch.id, stopwatch.currentMs,null)
             } else {
-//                setIsRecyclable(false)
                 listener.start(stopwatch.id)
              }
             }
@@ -77,13 +75,11 @@ class StopwatchViewHolder(
     }
 
 
-
      private fun stopTimer(stopwatch: Stopwatch) {
         binding.startStopButton.text="START"
         timer?.cancel()
         binding.blinkingIndicator.isInvisible = true
         (binding.blinkingIndicator.background as? AnimationDrawable)?.stop()
-
     }
 
         private fun getCountDownTimer(stopwatch: Stopwatch) =
@@ -102,9 +98,6 @@ class StopwatchViewHolder(
                     stopwatch.currentMs=stopwatch.startTime
                     stopwatch.isFinish=true
                     binding.root.setCardBackgroundColor(resources.getColor(R.color.pomodoroColorVariant))
-
                     listener.stop(stopwatch.id, stopwatch.currentMs,true)
-//                    if(!isRecyclable)
-//                        setIsRecyclable(true)
                 })
 }
