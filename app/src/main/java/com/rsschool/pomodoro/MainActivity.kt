@@ -63,9 +63,10 @@ class MainActivity : AppCompatActivity(), StopwatchListener, LifecycleObserver {
         stopwatches.replaceAll{
             when {
                 it.id == id -> Stopwatch(it.id, it.startTime,currentMs ?: it.currentMs, isStarted,isFinish?:it.isFinish,it.timer)
-                it.isStarted ->{
+                it.isStarted && isFinish==null->{
                     it.timer?.cancel()
-                    Stopwatch(it.id,  it.startTime,currentMs ?: it.currentMs, false,isFinish?:it.isFinish,it.timer)}
+                    Stopwatch(it.id,  it.startTime,currentMs ?: it.currentMs, false,isFinish?:it.isFinish,it.timer)
+                    }
                 else -> {it}
             }
         }

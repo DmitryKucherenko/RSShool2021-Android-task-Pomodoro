@@ -76,7 +76,9 @@ class ForegroundService : Service() {
                     NOTIFICATION_ID,
                     getNotification(it.displayTime())
                 )},
-            finish={commandStop()})
+            finish={
+                //commandStop()
+            })
             .start()
           }
 

@@ -10,7 +10,6 @@ import com.rsschool.pomodoro.databinding.StopwatchItemBinding
 import com.rsschool.pomodoro.model.Stopwatch
 
 
-
 class StopwatchViewHolder(
     private val binding: StopwatchItemBinding,
     private val listener: StopwatchListener,
@@ -41,6 +40,7 @@ class StopwatchViewHolder(
         } else {
             stopTimer(stopwatch)
         }
+
         initButtonsListeners(stopwatch)
     }
 
@@ -54,12 +54,18 @@ class StopwatchViewHolder(
              }
             }
 
+        binding.resetButton.setOnClickListener {
+            listener.stop(stopwatch.id, stopwatch.startTime,false)
+         }
 
         binding.deleteButton.setOnClickListener {
             if(!isRecyclable) setIsRecyclable(true)
             binding.root.setCardBackgroundColor(resources.getColor(R.color.white))
             listener.delete(stopwatch.id) }
     }
+
+
+
 
     private fun startTimer(stopwatch: Stopwatch) {
         binding.startStopButton.text="STOP"
@@ -95,7 +101,6 @@ class StopwatchViewHolder(
                     stopTimer(stopwatch)
                     binding.progressView.setCurrent(0)
                     binding.stopwatchTimer.text = stopwatch.startTime.displayTime()
-                    stopwatch.currentMs=stopwatch.startTime
                     stopwatch.isFinish=true
                     binding.root.setCardBackgroundColor(resources.getColor(R.color.pomodoroColorVariant))
                     listener.stop(stopwatch.id, stopwatch.currentMs,true)
