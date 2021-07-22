@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity(), StopwatchListener, LifecycleObserver {
     private val stopwatchAdapter = StopwatchAdapter(this)
     private val stopwatches = mutableListOf<Stopwatch>()
     private var nextId = 0
+    //текущий активный id stopwatch
     private var currentId= -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,25 +33,29 @@ class MainActivity : AppCompatActivity(), StopwatchListener, LifecycleObserver {
             layoutManager = LinearLayoutManager(context)
             adapter = stopwatchAdapter
         }
+        //добавляем слушателя на кнопку
         binding.addNewStopwatchButton.setOnClickListener {
+            //получаем время таймера в минутах
             val startTime= binding.editTime.text.toString().toLongOrNull()?.times(60000L) ?: 0L
+          //добавляем в лист stopwatch
             stopwatches.add(Stopwatch(nextId++, startTime, currentMs = startTime, isStarted = false,false,null))
+           //Передаем в адаптер лист stopwatch
             stopwatchAdapter.submitList(stopwatches.toList())
         }
     }
 
-
+   //Передача id запущенного таймера и установка свойства isStarted=true
     override fun start(id: Int) {
         currentId=id
         changeStopwatch(id,null, true,null)
     }
-
+    //Передача id остановленного таймера и установка свойства isStarted=false
     override fun stop(id: Int, currentMs: Long,isFinish:Boolean?) {
         if(id==currentId)currentId=-1
         changeStopwatch(id, currentMs, false,isFinish)
     }
 
-
+    //удаление таймера из списка stopwatches по id и передача в адаптер обновленного списка
     override fun delete(id: Int) {
         if(id==currentId)currentId=-1
         stopwatches.remove(stopwatches.find { it.id == id })
@@ -58,7 +63,7 @@ class MainActivity : AppCompatActivity(), StopwatchListener, LifecycleObserver {
     }
 
 
-
+//метод инициализации stopwatch для случаев start,stop,delete и передача в адаптер
     private fun changeStopwatch(id: Int, currentMs: Long?, isStarted: Boolean,isFinish:Boolean?) {
         stopwatches.replaceAll{
             when {
@@ -75,7 +80,7 @@ class MainActivity : AppCompatActivity(), StopwatchListener, LifecycleObserver {
 
 
 
-
+//запуск сервиса при уходе в background
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onAppBackgrounded() {
             var startTime = stopwatchAdapter.currentList.find { it.id == currentId }?.currentMs ?: 0L
@@ -86,7 +91,7 @@ class MainActivity : AppCompatActivity(), StopwatchListener, LifecycleObserver {
             startService(startIntent)
         }
     }
-
+//остановка сервиса при уходе в foreground
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onAppForegrounded() {
         val stopIntent = Intent(this, ForegroundService::class.java)
