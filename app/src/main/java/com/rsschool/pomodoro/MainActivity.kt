@@ -1,10 +1,13 @@
 package com.rsschool.pomodoro
 
 import android.animation.ObjectAnimator
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.IntentSender
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import android.widget.Toast.LENGTH_LONG
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -14,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rsschool.pomodoro.adapter.StopwatchAdapter
 import com.rsschool.pomodoro.databinding.ActivityMainBinding
 import com.rsschool.pomodoro.model.Stopwatch
+import kotlin.system.exitProcess
 
 
 class MainActivity : AppCompatActivity(), StopwatchListener, LifecycleObserver {
@@ -37,10 +41,13 @@ class MainActivity : AppCompatActivity(), StopwatchListener, LifecycleObserver {
         binding.addNewStopwatchButton.setOnClickListener {
             //получаем время таймера в минутах
             val startTime= binding.editTime.text.toString().toLongOrNull()?.times(60000L) ?: 0L
-          //добавляем в лист stopwatch
+          //Чтобы приложение не зависло ограничиваем число таймеров
+            if(stopwatches.size<=100){
+                //добавляем в лист stopwatch
             stopwatches.add(Stopwatch(nextId++, startTime, currentMs = startTime, isStarted = false,false,null))
            //Передаем в адаптер лист stopwatch
-            stopwatchAdapter.submitList(stopwatches.toList())
+            stopwatchAdapter.submitList(stopwatches.toList())}
+            else Toast.makeText(applicationContext, "Timer count > max", LENGTH_LONG).show()
         }
     }
 
@@ -98,5 +105,22 @@ class MainActivity : AppCompatActivity(), StopwatchListener, LifecycleObserver {
         stopIntent.putExtra(COMMAND_ID, COMMAND_STOP)
         startService(stopIntent)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        onAppForegrounded()
+    }
+
+
+    override fun onBackPressed() {
+        AlertDialog.Builder(this)
+            .setMessage("Do your want out from application?")
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                exitProcess(0)
+            }
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+            }.create().show()
+    }
+
 
 }

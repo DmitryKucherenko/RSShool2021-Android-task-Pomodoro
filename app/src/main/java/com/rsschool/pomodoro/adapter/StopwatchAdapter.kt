@@ -35,9 +35,7 @@ class StopwatchAdapter(
             }
 
             override fun getChangePayload(oldItem: Stopwatch, newItem: Stopwatch) = Any()
-            //?{
-            //   return super.getChangePayload(oldItem, newItem)
-            //}
+
         }
     }
 }

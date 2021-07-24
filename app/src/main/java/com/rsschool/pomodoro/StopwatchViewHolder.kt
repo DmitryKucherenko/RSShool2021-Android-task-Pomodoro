@@ -17,22 +17,26 @@ class StopwatchViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     private var timer: CountDownTimer? = null
 
+
     fun bind(stopwatch: Stopwatch) {
+        //Делаем привязку отображения состояния таймера
         binding.stopwatchTimer.text = stopwatch.currentMs.displayTime()
+        //Отключаем переиспользование холдера если таймер запущен
         if(stopwatch.isStarted) {
             setIsRecyclable(false)
         }
+        //Включаем переиспользование, если таймер не активен
         else if(!isRecyclable){
             setIsRecyclable(true)
         }
-
+       //если таймер уже начал работу отображаем progressbar
         if(stopwatch.currentMs!=stopwatch.startTime)
         {
             binding.progressView.setPeriod(stopwatch.startTime)
-            binding.progressView.setCurrent(stopwatch.currentMs)
+            binding.progressView.setCurrent(stopwatch.startTime-stopwatch.currentMs)
         }else
             binding.progressView.setCurrent(0)
-
+//если таймер уже отработал красим в красный цвет иначе в белый
         if(stopwatch.isFinish) binding.root.setCardBackgroundColor(resources.getColor(R.color.pomodoroColorVariant))else
             binding.root.setCardBackgroundColor(resources.getColor(R.color.white))
         if (stopwatch.isStarted) {
@@ -40,7 +44,7 @@ class StopwatchViewHolder(
         } else {
             stopTimer(stopwatch)
         }
-
+//инициализируем кнопки
         initButtonsListeners(stopwatch)
     }
 
@@ -57,7 +61,7 @@ class StopwatchViewHolder(
         binding.resetButton.setOnClickListener {
             listener.stop(stopwatch.id, stopwatch.startTime,false)
          }
-
+//обработчик при нажатии на кнопку удалить
         binding.deleteButton.setOnClickListener {
             if(!isRecyclable) setIsRecyclable(true)
             binding.root.setCardBackgroundColor(resources.getColor(R.color.white))
@@ -66,7 +70,7 @@ class StopwatchViewHolder(
 
 
 
-
+//запуск таймера
     private fun startTimer(stopwatch: Stopwatch) {
         binding.startStopButton.text="STOP"
         binding.root.setCardBackgroundColor(resources.getColor(R.color.white))
@@ -80,14 +84,14 @@ class StopwatchViewHolder(
         stopwatch.isFinish=false
     }
 
-
+//остановка таймера
      private fun stopTimer(stopwatch: Stopwatch) {
         binding.startStopButton.text="START"
         timer?.cancel()
         binding.blinkingIndicator.isInvisible = true
         (binding.blinkingIndicator.background as? AnimationDrawable)?.stop()
     }
-
+//Получаем таймер CountDownTimer с передачей поведения в таймер через лямбду
         private fun getCountDownTimer(stopwatch: Stopwatch) =
              getTimer(
                 startTime = stopwatch.currentMs,
@@ -95,11 +99,11 @@ class StopwatchViewHolder(
                 tick =   {
                     binding.stopwatchTimer.text = it.displayTime()
                     stopwatch.currentMs=it
-                    binding.progressView.setCurrent(it)
+                    binding.progressView.setCurrent(stopwatch.startTime-it)
                 },
                 finish = {
                     stopTimer(stopwatch)
-                    binding.progressView.setCurrent(0)
+                    binding.progressView.setCurrent(stopwatch.startTime)
                     binding.stopwatchTimer.text = stopwatch.startTime.displayTime()
                     stopwatch.isFinish=true
                     binding.root.setCardBackgroundColor(resources.getColor(R.color.pomodoroColorVariant))
